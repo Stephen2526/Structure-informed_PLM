@@ -1,0 +1,1 @@
+{"class_size": 32, "pred_head_dropout": 0.1, "label_type": "distMap", "multi_copy_num": 4, "eval_phase": true}

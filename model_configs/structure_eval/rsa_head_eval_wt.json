@@ -1,0 +1,1 @@
+{"class_size": 2, "pred_head_dropout": 0.1, "label_type": "rsa", "multi_copy_num": 16, "eval_phase": true}

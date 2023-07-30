@@ -1,0 +1,5 @@
+{
+"class_size": 3,
+"pred_head_dropout": 0.1,
+"label_type": "ss"
+}

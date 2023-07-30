@@ -1,0 +1,4 @@
+{
+"use_class_weights": true,
+"seq_max_length": 514
+}
