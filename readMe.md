@@ -159,8 +159,4 @@ For VH of length L_h and VL of length L_l, the final embeddings have size L_h * 
 "hidden_states_lastLayer_token_VH": list, // VH embeddings L_h * hidden_dim
 "hidden_states_lastLayer_token_VL": list, // VL embeddings L_l * hidden_dim
 }
-<<<<<<< HEAD
 ```
-=======
-```
->>>>>>> a08fdd035e8e72a661f2efde04595d0b14893479
