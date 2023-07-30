@@ -111,52 +111,6 @@ python scripts/main.py \
 If run command successfully, a csv file named '{data_file_name}_{embed_modelNm}_predictions.csv' should appear under the folder '/path/to/dataset' which contains predicted fitness scores for each mutation. If groundtruth fitness scores are given, a json file named '{data_file_name}_{embed_modelNm}_metrics.json' will be generated which contains metric values.
 
 
-## Finetuning over family sequence data
+## Sequence-only fine-tuning
 
-# Antibody Language Models
-## Compute residue embeddings for antibody heavy and light chain sequences
-1. Prepare antibody sequence data
-
-For each antibody heavy and light chain pair, the sequence data needs to be saved into this dictionary format with unique identifiers for H/L sequence which will be used as identifiers for embedding later.
-```txt
-{"entityH": '001_VH', //unique identifier for heavy chain sequence
- "entityL": '001_VL', //unique identifier for light chain sequence
- "seqVH": 'EVQLVQSGAAVKKPGESLRISCKGSGYIFTNYWINWVRQMPGRGLEWMGRIDPSDSYTNYSSSFQGHVTISADKSISTVYLQWRSLKDTDTAMYYCARLGSTAPWGQGTMVTVSS', //VH sequence
- "seqVL": 'DIQMTQSPSSLSASVGDRLTITCRASQSIDNYLNWYQQKPGKAPQLLIYGASRLQDGVSSRFSGSGSGTDFTLTISSLQPEDFATYFCQQGYSVPFTFGPGTKLDIK', //VL sequence
-}
-```
-Then, use this code to save into lmdb format.
-```python
-import lmdb
-import pickle as pkl
-
-map_size = (1024 * 15) * (2 ** 20) # 15G, change accordingly
-wrtEnv = lmdb.open('path/to/data/dir/data_file_name.lmdb',map_size=map_size)
-with wrtEnv.begin(write=True) as txn:
-    for i, entry in enumerate(data_list): # data_list contains all dictionaries in the above format
-        txn.put(str(i).encode(), pkl.dumps(entry))
-    txn.put(b'num_examples', pkl.dumps(i+1))
-wrtEnv.close()
-```
-2. Run model
-
-Download the trained model's weight and configuration files from [here](https://drive.google.com/drive/folders/1vuMRUwAqX0iIuJ0EfqbgT0ppDpWdFk4G?usp=sharing) and save under a local folder. For parameter *task*, refer to the column 'task' in [table](https://docs.google.com/document/d/1eGh1QT6j3FpSMPu8Sgfm5HBcABGMpraI_aI2HmMJ3Uc/edit?usp=sharing). Run python script below to compute embeddings for each residue.
-```python
-python scripts/main.py \
-    run_eval \
-    transformer \ 
-    'task' \ # refer to the table
-    'path/to/model/dir' \ # path to downloaded model dir
-    --batch_size=16 \ # change accordingly
-    --data_dir='path/to/data/dir' \ # path to data dir
-    --split='data_file_name' \ # data file name without extension '.lmdb'
-    --metrics embed_antibody
-```
-For VH of length L_h and VL of length L_l, the final embeddings have size L_h * hidden_dim for VH and L_l * hidden_dim for VL. After successful running of the command, a json file 'data_file_name.json' should appear under the folder 'path/to/data/dir/embeddings/'. Identifiers and embeddings are organized in the format below.
-```text
-{"entityH":  '001_VH', //unique identifier for heavy chain sequence
-"entityL": '001_VL', //unique identifier for light chain sequence
-"hidden_states_lastLayer_token_VH": list, // VH embeddings L_h * hidden_dim
-"hidden_states_lastLayer_token_VL": list, // VL embeddings L_l * hidden_dim
-}
-```
+## Sequence+structure joint fine-tuning
