@@ -1,6 +1,9 @@
 # Setup Environment
 Please check steps in __setup_env.sh__ to set up the environment. Some variables need to changed according to user's preference.
 
+# Data Availability
+Zenodo link to be added here
+
 # Protein Sequence-based Language Modeling
 
 ### Download pretrained models
