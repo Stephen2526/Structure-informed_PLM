@@ -7,7 +7,7 @@ Zenodo link to be added here
 # Protein Sequence-based Language Modeling
 
 ### Download pretrained models
-Before running specific tasks, download protein pretrained language models from [google drive](https://drive.google.com/file/d/1FZewUpVQ2jJL_Hg5NyFM6qGb4exJ2SRr/view?usp=share_link), decompress and save under the main folder ProteinEncoder-LM/
+Before running specific tasks, download protein pretrained language models from [google drive](https://), decompress and save under the main folder ProteinEncoder-LM/
 
 ### Model architecture hyperparameters
 |model name|training data|# layers|# heads|hidden size|FF  |
