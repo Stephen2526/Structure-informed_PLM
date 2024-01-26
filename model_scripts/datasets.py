@@ -3211,7 +3211,7 @@ class SeqStructureMultiTaskDataset_MultiCopy(Dataset):
             aa_seq_mask[0] = aa_seq_mask[-1] = 0
             
             if item['ss3'] is not None:
-                distance_map = np.frombuffer(item['distance_map'],dtype=np.float16).astype(np.float32).reshape(seq_len,seq_len)[seg_start:seg_end,seg_start:seg_end]
+                distance_map = np.frombuffer(item['distance_map'],dtype=np.float64).astype(np.float32).reshape(seq_len,seq_len)[seg_start:seg_end,seg_start:seg_end]
                 ss3_str = item['ss3'][seg_start:seg_end]
                 #ss8_str = item['ss8'][seg_start:seg_end]
                 rsa2_str = item['rsa_class'][seg_start:seg_end]

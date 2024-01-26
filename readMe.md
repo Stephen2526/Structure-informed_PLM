@@ -1,25 +1,47 @@
-# Setup Environment
-Please check steps in __setup_env.sh__ to set up the environment. Some variables need to changed according to user's preference.
+# Table of **Contents**
+- [Installation](#installation)
+- [Data and model Availability](#data-and-model-availability)
+    - [Data](#data)
+    - [Model](#model-weights)
+- [Tasks](#tasks)
+    - [Sequence embedding](#sequence-embedding)
+    - [Variant fitness](#variant-fitness)
+    - [Structure-informed FT](#structure-informed-finetuning)
 
-# Data Availability
-Zenodo link to be added here
+# Installation
+Use `conda` command to set up the environment with necessary dependencies.
 
-# Protein Sequence-based Language Modeling
+```shell
+conda env create -f environment.yml
+```
+We support cross-machine parallel training and mixed percision training for our models. You need to install [Apex](https://github.com/NVIDIA/apex/tree/master?tab=readme-ov-file#from-source) in order to use these features. Please install Apex with CUDA and C++ extensions. GCC library is required for compiling Apex. We recommend version 9.3.0 and 10.3.0 which have been tested working.
 
-### Download pretrained models
-Before running specific tasks, download protein pretrained language models from [google drive](https://drive.google.com/file/d/1FZewUpVQ2jJL_Hg5NyFM6qGb4exJ2SRr/view?usp=share_link), decompress and save under the main folder ProteinEncoder-LM/
+*Updates:* The latest [master](https://github.com/NVIDIA/apex/tree/master?tab=readme-ov-file) branch may give failures in setting up cpp extensions and cuda extensions. Check this [issue](https://github.com/NVIDIA/apex/issues/1737#issuecomment-1762662648) from Apex for a potential solution.
 
-### Model architecture hyperparameters
-|model name|training data|# layers|# heads|hidden size|FF  |
-|--------- | ----------- | -------| ----  | -------   |--- |
-|rp75_pretrain_1| pfam_rp75 | 12  | 12    | 768       |3072|
-|rp15_pretrain_1| pfam_rp15 | 12  | 12    | 768       |3072|
-|rp15_pretrain_2| pfam_rp15 | 6   | 12    | 768       |3072|
-|rp15_pretrain_3| pfam_rp15 | 4   | 8     | 768       |3072|
-|rp15_pretrain_4| pfam_rp15 | 4   | 8     | 768       |1024|
+# Data and model Availability
+Processed data in LMDB format and model weights can be downlaoded from [Zenodo]
+#### Data:
+* domain sequences for pretraining
+* family homologous sequences for sequence-only finetuning
+* family sequences+structures for structure-informed finetuning
+* fitness labels from DMS assays
+#### Model weights:
+* pretrained meta models
+* sequence-only finetuned models
+* structure-informed finetuned models
 
+### Meta model architecture hyperparams
+|model id|training set|# layers|# heads|hidden size| FF  |
+|--------- | --------- | -------| ----  | -------   |--- |
+|RP75_B1   | pfam_rp75 | 12  | 12    | 768       |3072|
+|RP15_B1   | pfam_rp15 | 12  | 12    | 768       |3072|
+|RP15_B2   | pfam_rp15 | 6   | 12    | 768       |3072|
+|RP15_B3   | pfam_rp15 | 4   | 8     | 768       |3072|
+|RP15_B4   | pfam_rp15 | 4   | 8     | 768       |1024|
 
-## Compute Residue Embeddings for Protein Sequences
+# Tasks
+
+## Sequence embedding
 1. Prepare sequence data
 
 For each sequence, save the information of identifier and amino acids in the dictionary format, follow the example below. And append all such dictionaries to a List (e.g. named data_list).
@@ -64,7 +86,7 @@ For a sequence of length L, the final embeddings have size L * 768. After succes
 {seq_id : embedding_matrix} // seq_id is the given identifier for the sequence, embedding_matrix is a list with size L * 768.
 ```
 
-## Predict mutation fitness scores
+## Variant fitness
 0. Information
 * Log ratio of likelihood: $\textup{log}_{e} \frac{p(\textup{mut})}{p(\textup{wt})}$ is used as fitness prediction. More positive value means better than WT and more negative value means worse than WT.
 
@@ -114,6 +136,21 @@ python scripts/main.py \
 If run command successfully, a csv file named '{data_file_name}_{embed_modelNm}_predictions.csv' should appear under the folder '/path/to/dataset' which contains predicted fitness scores for each mutation. If groundtruth fitness scores are given, a json file named '{data_file_name}_{embed_modelNm}_metrics.json' will be generated which contains metric values.
 
 
-## Sequence-only fine-tuning
+## Structure-informed finetuning
+Required packages:
+* [DSSP](https://ssbio.readthedocs.io/en/latest/instructions/dssp.html#dssp), run `mkdssp -h` to verify.
+* [MMseq2](https://github.com/soedinglab/MMseqs2), run `mmseqs easy-linclust -h` to verify.
+* [HMMER](http://hmmer.org/documentation.html), run `esl-reformat -h` to verify.
 
-## Sequence+structure joint fine-tuning
+Required database files:
+* `accession_ids.csv` from [ftp](https://ftp.ebi.ac.uk/pub/databases/alphafold/) of Alphafold Database
+* `batch_download.sh` from [RCSB](https://www.rcsb.org/docs/programmatic-access/batch-downloads-with-shell-script)
+
+### Training data generation
+Given a target protein sequence, the first step is to query its homologous sequences using [EVcouplings](https://github.com/debbiemarkslab/EVcouplings?tab=readme-ov-file#evcouplings), please follow instructions on their Github repo. It is recommended to explore multiple bit score thresholds and select the best one as ellaborated in Appendix.C of [Tranception](https://arxiv.org/abs/2205.13760).
+
+With the acquired MSA, generate training data of sequences and structures with the following command
+
+```python
+python
+```

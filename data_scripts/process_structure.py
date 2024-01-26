@@ -8,7 +8,6 @@ from urllib.request import build_opener
 import Bio.PDB,os,requests,sys,logging,lmdb
 from matplotlib.pyplot import contour
 from requests.adapters import HTTPAdapter, Retry
-from prody import extendVector
 from Bio.PDB.Residue import Residue
 from Bio.PDB.Atom import Atom
 from Bio.PDB.DSSP import dssp_dict_from_pdb_file

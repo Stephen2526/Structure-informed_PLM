@@ -1,0 +1,49 @@
+# reasons you might want to use `environment.yaml` instead of `requirements.txt`:
+# - pip installs packages in a loop, without ensuring dependencies across all packages
+#   are fulfilled simultaneously, but conda achieves proper dependency control across
+#   all packages
+# - conda allows for installing packages without requiring certain compilers or
+#   libraries to be available in the system, since it installs precompiled binaries
+
+name: si_plm_env
+
+channels:
+  - pytorch
+  - conda-forge
+  - defaults
+
+#  - anaconda
+#  - pypi
+#  - pyg
+
+# it is strongly recommended to specify versions of packages installed through conda
+# to avoid situation when version-unspecified packages install their latest major
+# versions which can sometimes break things
+
+# current approach below keeps the dependencies in the same major versions across all
+# users, but allows for different minor and patch versions of packages where backwards compatibility is usually guaranteed
+
+dependencies:
+  - conda-forge::python=3.9.18
+  - conda-forge::setuptools=59.5.0
+  - conda-forge::pip=23.0.1
+  - conda-forge::cudatoolkit-dev=11.6.0
+  - pytorch::pytorch=1.12.1
+  - conda-forge::torchmetrics
+  - conda-forge::matplotlib
+  - conda-forge::tensorboardx=2.5.1
+  - conda-forge::python-lmdb=1.4.1
+
+  - pip:
+      - numpy
+      - pandas
+      - scipy
+      - scikit-learn
+      - tqdm
+      - torch_geometric
+      - umap-learn
+      - requests
+      - boto3
+      - filelock
+      - ninja
+      - biopython
