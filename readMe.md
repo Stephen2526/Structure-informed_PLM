@@ -19,7 +19,7 @@ We support cross-machine parallel training and mixed percision training for our 
 *Updates:* The latest [master](https://github.com/NVIDIA/apex/tree/master?tab=readme-ov-file) branch may give failures in setting up cpp extensions and cuda extensions. Check this [issue](https://github.com/NVIDIA/apex/issues/1737#issuecomment-1762662648) from Apex for a potential solution.
 
 # Data and model Availability
-Processed data in LMDB format and model weights can be downlaoded from [Zenodo]
+Processed data in LMDB format and model weights can be downlaoded from [Zenodo](https://zenodo.org/records/8197882)
 #### Data:
 * domain sequences for pretraining
 * family homologous sequences for sequence-only finetuning
